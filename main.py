@@ -5,7 +5,12 @@ from supabase_client import (
     change_status,
     create_beef,
     fetch_posts,
-    fetch_beefs
+    fetch_beefs,
+    ban,
+    check_is_banned,
+    add_penalty,
+    check_penalties,
+    user_metadata
 )
 
 app = Flask(__name__)
@@ -61,5 +66,48 @@ def fetch_beefs_endpoint():
     response = fetch_beefs()
     return jsonify(response)
 
+@app.route("/ban", methods=["PUT"])
+def ban_endpoint():
+    data = request.json
+    user_id = data.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    response = ban(user_id)
+    return jsonify(response)
+
+@app.route("/check_is_banned", methods=["GET"])
+def check_is_banned_endpoint():
+    user_id = request.args.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    response = check_is_banned(user_id)
+    return jsonify(response)
+
+@app.route("/add_penalty", methods=["PUT"])
+def add_penalty_endpoint():
+    data = request.json
+    user_id = data.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    response = add_penalty(user_id)
+    return jsonify(response)
+
+@app.route("/check_penalties", methods=["GET"])
+def check_penalties_endpoint():
+    user_id = request.args.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    response = check_penalties(user_id)
+    return jsonify(response)
+
+@app.route("/user_metadata", methods=["GET"])
+def user_metadata_endpoint():
+    user_id = request.args.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id is required"}), 400
+    response = user_metadata(user_id)
+    return jsonify(response)
+
 if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=8080)
     app.run(debug=True)
