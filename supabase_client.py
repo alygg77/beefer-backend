@@ -13,23 +13,19 @@ def create_user(email):
     response = supabase.table("users").insert(data).execute()
     return response.data
 
-def create_post(user_id, topic_name, topic_desc):
-    data = {"user_id": user_id, "topic_name": topic_name, "topic_desc": topic_desc}
-    response = supabase.table("posts").insert(data).execute()
-    return response.data
-
-def change_status(post_id, new_status):
-    data = {"status": new_status}
-    response = supabase.table("posts").update(data).eq("id", post_id).execute()
-    return response.data
-
-def create_beef(topic_id, user_id_1, user_id_2):
-    data = {"topic_id": topic_id, "user_id_1": user_id_1, "user_id_2": user_id_2}
+def create_beef(user_id, topic_name, topic_desc, nsfw=False, status="draft"):
+    data = {
+        "user_id": user_id,
+        "nsfw": nsfw,
+        "topic_name": topic_name,
+        "topic_desc": topic_desc,
+    }
     response = supabase.table("beefs").insert(data).execute()
     return response.data
 
-def fetch_posts():
-    response = supabase.table("posts").select("*").execute()
+def change_beef_status(beef_id, new_status):
+    data = {"status": new_status}
+    response = supabase.table("beefs").update(data).eq("id", beef_id).execute()
     return response.data
 
 def fetch_beefs():
@@ -60,3 +56,6 @@ def check_penalties(user_id):
 def user_metadata(user_id):
     response = supabase.table("users").select("email, alias, points, amount_debated, wins, penalties, is_banned").eq("id", user_id).execute()
     return response.data[0] if response.data else {"error": "User not found"}
+
+response = create_beef(1, "test", False)
+print(response)
